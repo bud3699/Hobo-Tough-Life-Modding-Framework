@@ -1,0 +1,28 @@
+{
+    "id": "tinfoil_fedora",
+    "type": "gear",
+    "category": "hat",
+    "name": "@tinfoil_fedora.name",
+    "description": "@tinfoil_fedora.desc",
+    "baseItem": 1,
+    "referenceItemId": 160,
+    "icon": "assets/tinfoil_fedora_icon.png",
+    "price": 0,
+    "weight": 0.1,
+    "stats": [
+        {
+            "type": "Charisma",
+            "value": -60
+        },
+        {
+            "type": "Immunity",
+            "value": 40
+        },
+        {
+            "type": "ToxicityResistance",
+            "value": 30
+        }
+    ],
+    "warmResistance": 5,
+    "wetResistance": 10
+}

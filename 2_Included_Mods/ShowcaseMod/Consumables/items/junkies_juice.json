@@ -1,0 +1,26 @@
+{
+    "id": "junkies_juice",
+    "type": "consumable",
+    "name": "@junkies_juice.name",
+    "description": "@junkies_juice.desc",
+    "baseItem": 1,
+    "icon": "assets/junkies_juice_icon.png",
+    "price": 50,
+    "weight": 0.5,
+    "statChanges": [
+        {
+            "stat": "health",
+            "value": 50
+        }
+    ],
+    "buffEffects": [
+        {
+            "buff": "Healing",
+            "tier": 1
+        },
+        {
+            "buff": "Confidence",
+            "tier": 1
+        }
+    ]
+}

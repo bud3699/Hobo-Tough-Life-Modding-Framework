@@ -1,0 +1,36 @@
+{
+  "projectPath": "C:/Users/User/OneDrive/Dokumente/HoboMod/Source/HoboModFramework/HoboModPlugin.csproj",
+  "testProjectPath": "C:/Users/User/OneDrive/Dokumente/HoboMod/HoboModPlugin.Tests/HoboModPlugin.Tests.csproj",
+  "modsPath": "C:/Users/User/OneDrive/Dokumente/HoboMod/test_mods",
+  "gamePath": "C:/Program Files (x86)/Steam/steamapps/common/Hobo Tough Life",
+  "gameExePath": "C:/Program Files (x86)/Steam/steamapps/common/Hobo Tough Life/Hobo Tough Life.exe",
+  "logPath": "C:/Program Files (x86)/Steam/steamapps/common/Hobo Tough Life/BepInEx/LogOutput.log",
+  "reportPath": "./reports",
+  "expectations": {
+    "expectedMods": [
+      "testsuite",
+      "test_patch"
+    ],
+    "expectedItems": [
+      "testsuite:super_apple",
+      "testsuite:test_item"
+    ],
+    "expectedRecipes": [
+      "testsuite:super_apple_recipe"
+    ],
+    "expectedEvents": [
+      "OnItemPickup",
+      "OnGameSaved"
+    ],
+    "forbiddenMessages": [
+      "NullReferenceException",
+      "KeyNotFoundException"
+    ],
+    "failOnErrors": true,
+    "ignoreErrorsFromSources": [
+      "Unity",
+      "Steamworks",
+      "BepInEx"
+    ]
+  }
+}

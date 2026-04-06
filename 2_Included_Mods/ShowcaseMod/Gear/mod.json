@@ -1,0 +1,14 @@
+{
+    "id": "showcase_gear",
+    "name": "Showcase Mod - Gear",
+    "version": "1.0.0",
+    "author": "HoboMod Team",
+    "description": "Showcase gear items for HoboMod Framework",
+    "devHotkeys": [
+        {
+            "key": "F6",
+            "action": "spawn_item",
+            "itemId": "tinfoil_fedora"
+        }
+    ]
+}

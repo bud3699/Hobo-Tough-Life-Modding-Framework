@@ -1,0 +1,18 @@
+# Build artifacts
+bin/
+obj/
+
+# Copyrighted DLLs (users must add their own)
+lib/*.dll
+
+# IDE
+.vs/
+.vscode/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

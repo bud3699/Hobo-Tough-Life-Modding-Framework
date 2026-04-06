@@ -1,0 +1,24 @@
+{
+    "id": "devtools_hotkeys",
+    "name": "DevTools Hotkeys",
+    "version": "1.0.0",
+    "author": "HoboMod Team",
+    "description": "Provides development hotkeys for scene dumping and model debugging. F10=Identify Mesh, F11=Dump Scene, F12=Apply Model Overrides",
+    "devHotkeys": [
+        {
+            "key": "F10",
+            "action": "identify_mesh",
+            "itemId": ""
+        },
+        {
+            "key": "F11",
+            "action": "dump_scene",
+            "itemId": ""
+        },
+        {
+            "key": "F12",
+            "action": "apply_overrides",
+            "itemId": ""
+        }
+    ]
+}

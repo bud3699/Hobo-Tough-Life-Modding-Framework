@@ -1,0 +1,14 @@
+{
+    "id": "showcase_skinned_mesh",
+    "name": "Showcase - Skinned Mesh Replacement",
+    "version": "1.0.0",
+    "author": "User",
+    "description": "Replaces Majsner with a Zombie using Avatar Retargeting",
+    "avatarOverrides": [
+        {
+            "target": "SHMajsner",
+            "bundle": "zombie1_fixed",
+            "prefab": "Zombie1"
+        }
+    ]
+}
