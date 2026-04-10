@@ -88,18 +88,6 @@ namespace HoboModPlugin.Framework
                 }
                 else _log?.LogError("[SkinnedMeshHijack] FAILED to find InitializeNPCModel");
 
-                // Hook 2: OnModelLoaded — sonar logging
-                var loadedMethod = targetType.GetMethod("OnModelLoaded",
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (loadedMethod != null)
-                {
-                    _harmony.Patch(loadedMethod, postfix: new HarmonyMethod(
-                        typeof(SkinnedMeshHijack).GetMethod(nameof(OnModelLoaded_Postfix),
-                        BindingFlags.Static | BindingFlags.NonPublic)));
-                    _log?.LogInfo($"[SkinnedMeshHijack] Hooked {loadedMethod.Name}");
-                    patchedCount++;
-                }
-                else _log?.LogError("[SkinnedMeshHijack] FAILED to find OnModelLoaded");
 
                 // Hook 3: SwitchLOD — LOD defender
                 var switchMethod = targetType.GetMethod("SwitchLOD",
@@ -143,8 +131,6 @@ namespace HoboModPlugin.Framework
                 if (vanillaSMR == null || vanillaSMR.sharedMesh == null) return;
 
                 string vanillaMeshName = vanillaSMR.sharedMesh.name;
-                if (Plugin.EnableDebugMode.Value)
-                    _log?.LogInfo($"[SONAR] NPC Spawned | GO: {__instance.gameObject.name} | Mesh: {vanillaMeshName}");
 
                 // ── 2: Check if this NPC has a registered override ─────────
                 (string bundlePath, string prefabName) overrideInfo = default;
@@ -261,24 +247,6 @@ namespace HoboModPlugin.Framework
             }
         }
 
-        // ================================================================
-        //  HARMONY PATCH 1B: OnModelLoaded Postfix (Sonar)
-        // ================================================================
-
-        private static void OnModelLoaded_Postfix(NPCModelBehavior __instance)
-        {
-            try
-            {
-                var smr = __instance.GetComponentInChildren<SkinnedMeshRenderer>();
-                string meshName = smr?.sharedMesh != null ? smr.sharedMesh.name : "NULL_MESH";
-                if (Plugin.EnableDebugMode.Value)
-                    _log?.LogInfo($"[SONAR] OnModelLoaded | GO: {__instance.gameObject.name} | Mesh: {meshName}");
-            }
-            catch (Exception ex)
-            {
-                _log?.LogError($"[SkinnedMeshHijack] OnModelLoaded_Postfix EXCEPTION: {ex}");
-            }
-        }
 
         // ================================================================
         //  HARMONY PATCH 2: SwitchLOD Postfix (LOD Defender)

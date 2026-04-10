@@ -15,8 +15,10 @@ namespace HoboModPlugin.Framework
         private readonly ManualLogSource _log;
         private readonly ItemRegistry _itemRegistry;
         private readonly Dictionary<string, RegisteredRecipe> _recipes = new();
+        private readonly Dictionary<uint, string> _idToStringId = new();
         
-        private uint _nextRecipeId = 51000;
+        // Vanilla recipe ID threshold - mod recipes use IDs above this
+        private const uint VANILLA_ID_CEILING = 51000;
         
         // Static lookup for result counts - enables multi-item crafting via patches
         private static readonly Dictionary<uint, int> _recipeResultCounts = new();
@@ -67,8 +69,19 @@ namespace HoboModPlugin.Framework
         
         private void RegisterRecipe(ModManifest mod, RecipeDefinition definition)
         {
-            var numericId = _nextRecipeId++;
             var fullId = $"{mod.Id}:{definition.Id}";
+            
+            // Use deterministic hash instead of incremental ID to prevent save corruption
+            // when mods are added/removed/reordered
+            var numericId = GetDeterministicRecipeId(fullId);
+            
+            // Check for hash collision
+            if (_idToStringId.TryGetValue(numericId, out var existingId))
+            {
+                _log.LogWarning($"    Recipe ID collision: {fullId} collides with {existingId} (ID {numericId}). Skipping.");
+                return;
+            }
+            _idToStringId[numericId] = fullId;
             
             var registered = new RegisteredRecipe
             {
@@ -88,6 +101,24 @@ namespace HoboModPlugin.Framework
             
             _log.LogInfo($"    Registered recipe: {definition.Id} -> ID {numericId}" + 
                 (definition.ResultCount > 1 ? $" (ResultCount: {definition.ResultCount})" : ""));
+        }
+        
+        /// <summary>
+        /// Generate a deterministic numeric ID from a recipe's full ID string.
+        /// Uses FNV-1a hash (same algorithm as ItemRegistry) mapped to the 51000-251000 range.
+        /// </summary>
+        private static uint GetDeterministicRecipeId(string fullId)
+        {
+            unchecked
+            {
+                uint hash = 2166136261;
+                foreach (char c in fullId)
+                {
+                    hash = (hash ^ c) * 16777619;
+                }
+                // Map to range 51000-251000 (200k unique IDs, above vanilla ceiling)
+                return VANILLA_ID_CEILING + (hash % 200000);
+            }
         }
         
         /// <summary>
@@ -120,11 +151,12 @@ namespace HoboModPlugin.Framework
                 // Skip if already injected
                 if (recipes.ContainsKey(registered.NumericId)) return;
                 
-                // Find an Item-type recipe to clone
+                // Find a VANILLA Item-type recipe to clone (id < VANILLA_ID_CEILING)
+                // This prevents mod recipes from contaminating each other's data
                 Recipe sourceRecipe = null;
                 foreach (var r in recipes.Values)
                 {
-                    if (r != null && r.type == Recipe.RecipeType.Item)
+                    if (r != null && r.type == Recipe.RecipeType.Item && r.id < VANILLA_ID_CEILING)
                     {
                         sourceRecipe = r;
                         break;
@@ -145,7 +177,7 @@ namespace HoboModPlugin.Framework
                 // Configure basic properties
                 customRecipe.id = registered.NumericId;
                 customRecipe.type = ParseRecipeType(definition.Type);
-                customRecipe.index = 40 + (int)(registered.NumericId - 51000);
+                customRecipe.index = 40 + (int)(registered.NumericId - VANILLA_ID_CEILING);
                 customRecipe.requireSkillLvl = definition.SkillRequired;
                 customRecipe.notActive = definition.NotActive;
                 customRecipe.craftingDifficulty = definition.CraftingDifficulty;
@@ -246,12 +278,29 @@ namespace HoboModPlugin.Framework
             var item = _itemRegistry.GetItem(fullId);
             if (item != null) return item;
             
-            // Try just the item ID
+            // Try just the item ID in the mod registry
             item = _itemRegistry.GetItem(resultId);
             if (item != null) return item;
             
-            // Search all items for matching ID suffix
-            // This allows recipes to reference items by short name
+            // Fallback: Try parsing as a vanilla numeric ID (e.g., "150")
+            // This allows recipes to produce vanilla game items
+            if (uint.TryParse(resultId, out uint vanillaId))
+            {
+                var vanillaItems = ItemDatabase.items;
+                if (vanillaItems != null && vanillaItems.ContainsKey(vanillaId))
+                {
+                    var vanillaItem = vanillaItems[vanillaId];
+                    _log.LogInfo($"    Resolved result to vanilla item ID {vanillaId}");
+                    // Wrap in a RegisteredItem for compatibility with the injection pipeline
+                    return new RegisteredItem
+                    {
+                        FullId = $"vanilla:{vanillaId}",
+                        NumericId = vanillaId,
+                        GameItem = vanillaItem
+                    };
+                }
+            }
+            
             return null; // Item not found
         }
         
@@ -353,7 +402,8 @@ namespace HoboModPlugin.Framework
             _log.LogInfo("[RecipeRegistry] Clearing registry for fresh injection...");
             _recipes.Clear();
             _recipeResultCounts.Clear();
-            _nextRecipeId = 51000;
+            _idToStringId.Clear();
+            // Note: No ID counter reset needed - we use deterministic hashes now
             _log.LogInfo("[RecipeRegistry] Registry cleared.");
         }
         

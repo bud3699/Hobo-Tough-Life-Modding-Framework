@@ -7,7 +7,7 @@
     "avatarOverrides": [
         {
             "target": "SHMajsner",
-            "bundle": "zombie1_fixed",
+            "bundle": "zombie_model",
             "prefab": "Zombie1"
         }
     ]
