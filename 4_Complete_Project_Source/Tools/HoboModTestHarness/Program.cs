@@ -19,7 +19,7 @@ class Program
 
         // Base paths
         var basePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../.."));
-        var projectPath = Path.Combine(basePath, "HoboModPlugin-release/HoboModPlugin.csproj");
+        var projectPath = Path.Combine(basePath, "HoboModPlugin-release/HoboModFramework.csproj");
         var testProjectPath = Path.Combine(basePath, "HoboModPlugin.Tests/HoboModPlugin.Tests.csproj");
         var schemasPath = Path.Combine(AppContext.BaseDirectory, "Schemas");
         var testModsPath = Path.Combine(basePath, "test_mods");

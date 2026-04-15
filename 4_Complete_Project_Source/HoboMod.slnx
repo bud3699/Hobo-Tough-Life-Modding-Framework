@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/Source/">
-    <Project Path="Source/HoboModFramework/HoboModPlugin.csproj" />
+    <Project Path="Source/HoboModFramework/HoboModFramework.csproj" />
     <Project Path="Source/HoboMod.DevTools/HoboMod.DevTools.csproj" />
   </Folder>
   <Folder Name="/Tools/">

@@ -60,6 +60,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\HoboModFramework\HoboModPlugin.csproj" />
+    <ProjectReference Include="..\HoboModFramework\HoboModFramework.csproj" />
   </ItemGroup>
 </Project>
